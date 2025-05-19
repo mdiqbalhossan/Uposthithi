@@ -26,6 +26,16 @@ const AppMenu = () => {
                     icon: "pi pi-fw pi-building",
                     to: route("departments.index"),
                 },
+                {
+                    label: "Batches",
+                    icon: "pi pi-fw pi-calendar",
+                    to: route("batches.index"),
+                },
+                {
+                    label: "Courses",
+                    icon: "pi pi-fw pi-book",
+                    to: route("courses.index"),
+                },
             ],
         },
     ];

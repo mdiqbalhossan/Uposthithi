@@ -8,7 +8,7 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import { useRef, useEffect } from "react";
 
-export default function Index({ departments, flash }) {
+export default function Index({ courses, flash }) {
     const { delete: destroy } = useForm();
     const toast = useRef(null);
 
@@ -24,7 +24,7 @@ export default function Index({ departments, flash }) {
 
     const confirmDelete = (id) => {
         confirmDialog({
-            message: "Are you sure you want to delete this department?",
+            message: "Are you sure you want to delete this course?",
             header: "Confirm Delete",
             icon: "pi pi-exclamation-triangle",
             acceptClassName: "p-button-danger",
@@ -35,17 +35,13 @@ export default function Index({ departments, flash }) {
     };
 
     const handleDelete = (id) => {
-        destroy(route("departments.destroy", { department: id }), {
+        destroy(route("courses.destroy", { course: id }), {
             preserveScroll: true,
             onSuccess: () => {
-                showToast(
-                    "success",
-                    "Success",
-                    "Department deleted successfully"
-                );
+                showToast("success", "Success", "Course deleted successfully");
             },
             onError: () => {
-                showToast("error", "Error", "Failed to delete department");
+                showToast("error", "Error", "Failed to delete course");
             },
         });
     };
@@ -59,12 +55,14 @@ export default function Index({ departments, flash }) {
         );
     };
 
+    const departmentBodyTemplate = (rowData) => {
+        return rowData.department ? rowData.department.name : "-";
+    };
+
     const actionBodyTemplate = (rowData) => {
         return (
             <div className="flex gap-2">
-                <Link
-                    href={route("departments.edit", { department: rowData.id })}
-                >
+                <Link href={route("courses.edit", { course: rowData.id })}>
                     <Button
                         icon="pi pi-pencil"
                         rounded
@@ -101,25 +99,25 @@ export default function Index({ departments, flash }) {
 
     return (
         <Layout>
-            <Head title="Departments" />
+            <Head title="Courses" />
             <Toast ref={toast} />
             <ConfirmDialog />
             <div className="card">
                 <div className="flex justify-content-between align-items-center mb-4">
-                    <h1 className="text-2xl font-semibold">Departments</h1>
-                    <Link href={route("departments.create")}>
-                        <Button label="Create Department" icon="pi pi-plus" />
+                    <h1 className="text-2xl font-semibold">Courses</h1>
+                    <Link href={route("courses.create")}>
+                        <Button label="Create Course" icon="pi pi-plus" />
                     </Link>
                 </div>
 
                 <DataTable
-                    value={departments}
+                    value={courses}
                     stripedRows
                     paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     tableStyle={{ minWidth: "50rem" }}
-                    emptyMessage="No departments found"
+                    emptyMessage="No courses found"
                 >
                     <Column
                         field="id"
@@ -132,12 +130,30 @@ export default function Index({ departments, flash }) {
                         field="name"
                         header="Name"
                         sortable
-                        style={{ width: "30%" }}
+                        style={{ width: "15%" }}
+                    ></Column>
+                    <Column
+                        field="course_code"
+                        header="Code"
+                        sortable
+                        style={{ width: "10%" }}
                     ></Column>
                     <Column
                         field="description"
                         header="Description"
-                        style={{ width: "40%" }}
+                        style={{ width: "20%" }}
+                    ></Column>
+                    <Column
+                        field="department.name"
+                        header="Department"
+                        body={departmentBodyTemplate}
+                        style={{ width: "15%" }}
+                    ></Column>
+                    <Column
+                        field="credit_hours"
+                        header="Credit Hours"
+                        sortable
+                        style={{ width: "10%" }}
                     ></Column>
                     <Column
                         field="status"

@@ -8,7 +8,7 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import { useRef, useEffect } from "react";
 
-export default function Index({ departments, flash }) {
+export default function Index({ batches, flash }) {
     const { delete: destroy } = useForm();
     const toast = useRef(null);
 
@@ -24,7 +24,7 @@ export default function Index({ departments, flash }) {
 
     const confirmDelete = (id) => {
         confirmDialog({
-            message: "Are you sure you want to delete this department?",
+            message: "Are you sure you want to delete this batch?",
             header: "Confirm Delete",
             icon: "pi pi-exclamation-triangle",
             acceptClassName: "p-button-danger",
@@ -35,17 +35,13 @@ export default function Index({ departments, flash }) {
     };
 
     const handleDelete = (id) => {
-        destroy(route("departments.destroy", { department: id }), {
+        destroy(route("batches.destroy", { batch: id }), {
             preserveScroll: true,
             onSuccess: () => {
-                showToast(
-                    "success",
-                    "Success",
-                    "Department deleted successfully"
-                );
+                showToast("success", "Success", "Batch deleted successfully");
             },
             onError: () => {
-                showToast("error", "Error", "Failed to delete department");
+                showToast("error", "Error", "Failed to delete batch");
             },
         });
     };
@@ -59,12 +55,14 @@ export default function Index({ departments, flash }) {
         );
     };
 
+    const departmentBodyTemplate = (rowData) => {
+        return rowData.department ? rowData.department.name : "-";
+    };
+
     const actionBodyTemplate = (rowData) => {
         return (
             <div className="flex gap-2">
-                <Link
-                    href={route("departments.edit", { department: rowData.id })}
-                >
+                <Link href={route("batches.edit", { batch: rowData.id })}>
                     <Button
                         icon="pi pi-pencil"
                         rounded
@@ -101,25 +99,25 @@ export default function Index({ departments, flash }) {
 
     return (
         <Layout>
-            <Head title="Departments" />
+            <Head title="Batches" />
             <Toast ref={toast} />
             <ConfirmDialog />
             <div className="card">
                 <div className="flex justify-content-between align-items-center mb-4">
-                    <h1 className="text-2xl font-semibold">Departments</h1>
-                    <Link href={route("departments.create")}>
-                        <Button label="Create Department" icon="pi pi-plus" />
+                    <h1 className="text-2xl font-semibold">Batches</h1>
+                    <Link href={route("batches.create")}>
+                        <Button label="Create Batch" icon="pi pi-plus" />
                     </Link>
                 </div>
 
                 <DataTable
-                    value={departments}
+                    value={batches}
                     stripedRows
                     paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     tableStyle={{ minWidth: "50rem" }}
-                    emptyMessage="No departments found"
+                    emptyMessage="No batches found"
                 >
                     <Column
                         field="id"
@@ -132,12 +130,18 @@ export default function Index({ departments, flash }) {
                         field="name"
                         header="Name"
                         sortable
-                        style={{ width: "30%" }}
+                        style={{ width: "20%" }}
                     ></Column>
                     <Column
                         field="description"
                         header="Description"
-                        style={{ width: "40%" }}
+                        style={{ width: "30%" }}
+                    ></Column>
+                    <Column
+                        field="department.name"
+                        header="Department"
+                        body={departmentBodyTemplate}
+                        style={{ width: "15%" }}
                     ></Column>
                     <Column
                         field="status"
